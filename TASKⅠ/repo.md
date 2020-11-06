@@ -1,4 +1,16 @@
-##
+## **TASK**
+
+Analyze the home page loading of www.sjtu.edu.cn
+
+Carry out your optimization solution
+
+## **Repo**
+
+网页加载方面感觉并没有发现什么。。。
+
+可能页面中间的swiper加载的比较慢一点？（但是加载图片感觉本来就挺需要时间）
+
+同时应该是因为页面设置的问题，左上角的SJTU LOGO的正确大小应该是依赖于swiper的（并没有研究出完整的影响途径），因此在swiper被加载出之前，SJTU LOGO的尺寸并不是很正确（特别是屏宽小的时候很明显）。
 
 ## **其它**
 
