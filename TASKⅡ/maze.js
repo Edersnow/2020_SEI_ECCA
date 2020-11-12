@@ -1,4 +1,5 @@
-var ctxs, wid, hei, cols, rows, mazes, stacks = [], start = [{x:-1, y:-1}, {x:-1, y:-1}], end = [{x:-1, y:-1}, {x:-1, y:-1}],grid = 8, padding = 16, s, density=0.5, count=2;
+var ctxs, wid, hei, cols, rows, mazes, stacks = [], start = [{x:-1, y:-1}, {x:-1, y:-1}],
+    end = [{x:-1, y:-1}, {x:-1, y:-1}],grid = 8, padding = 16, s, density=0.5, count=2;
 function drawMaze(index) {
     for( var i = 0; i < cols; i++ ) {
         for( var j = 0; j < rows; j++ ) {
@@ -380,7 +381,8 @@ function createMaze1NonAni(ctx) {
             stacks[0].push( start[0] )
         }    
     }
-    document.getElementById("btnCreateMaze").removeAttribute("disabled");
+    //useless
+    //document.getElementById("btnCreateMaze").removeAttribute("disabled");
 }
 
 function createMaze2(ctx) {
@@ -462,7 +464,7 @@ function onCreate() {
     wid = document.getElementById("maze1").offsetWidth - padding; 
     hei = 400;
 
-    cols = eval(document.getElementById("cols").value); 
+    cols = eval(document.getElementById("cols").value);
     rows = eval(document.getElementById("rows").value);
 
     var mazeType = document.getElementById("sltType").value;
@@ -478,7 +480,6 @@ function onCreate() {
 
         var canvas = document.getElementById("canvas" + (i + 1));
         canvas.width = wid;
-        canvas.height = hei;
         s = canvas.width / (grid * cols);
         canvas.height = s * grid * rows;
         ctxs[i].scale(s, s);
