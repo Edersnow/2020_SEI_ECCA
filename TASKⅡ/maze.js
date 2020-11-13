@@ -17,6 +17,11 @@ function drawMaze(index) {
     }
 }
 
+function drawGrey(index) {
+    ctxs[index].fillStyle = "gray";
+    ctxs[index].fillRect(0, 0, grid * cols, grid * rows);
+}
+
 function drawBlock(index, sx, sy, a) {
     switch( a ) {
         case 0: ctxs[index].fillStyle = "black"; break;
@@ -300,25 +305,34 @@ function createArray( c, r ) {
 
 function createMaze1() {
     var neighbours = getNeighbours( 0, start[0].x, start[0].y, 1 ), l;
-    for(var i = 0; i < count; i++) {
-        drawMaze(i); 
-    }
 
-    if( neighbours.length < 1 ) {
-        if( stacks[0].length < 1 ) {
-
-            stacks = new Array(count);
-            stacks[0] = []
-            stacks[1] = [];
-            
-            start[0].x = start[0].y = -1;
-            document.getElementById( "canvas1" ).addEventListener( "mousedown", getCursorPos, false );
-            document.getElementById("btnCreateMaze").removeAttribute("disabled");
-
-            return;
-        }
+    while (neighbours.length < 1 && stacks[0].length){
         start[0] = stacks[0].pop();
-    } else {
+        neighbours = getNeighbours( 0, start[0].x, start[0].y, 1 );
+    }
+    if( neighbours.length < 1 && stacks[0].length < 1 ) {
+
+        for(var i = 0; i < count; i++) {
+            drawMaze(i); 
+            drawMaze(i);    
+        }
+
+        stacks = new Array(count);
+        stacks[0] = []
+        stacks[1] = [];
+        
+        start[0].x = start[0].y = -1;
+        document.getElementById( "canvas1" ).addEventListener( "mousedown", getCursorPos, false );
+        document.getElementById("btnCreateMaze").removeAttribute("disabled");
+
+        return;
+    }
+    else {
+
+        if (neighbours.length > 2){
+            stacks[0].push( start[0] )
+        }
+
         var i = 2 * Math.floor( Math.random() * ( neighbours.length / 2 ) )
         l = neighbours[i]; 
         mazes[0][l.x][l.y] = 0;
@@ -333,8 +347,6 @@ function createMaze1() {
         drawBlock(1, l.x, l.y, 0);
 
         start[0] = l
-
-        stacks[0].push( start[0] )
     }
     
     requestAnimationFrame( createMaze1 );
@@ -347,10 +359,6 @@ function createMaze1NonAni(ctx) {
         var neighbours = getNeighbours( 0, start[0].x, start[0].y, 1 ), l;
         if( neighbours.length < 1 ) {
             if( stacks[0].length < 1 ) {
-                for(var i = 0; i < count; i++) {
-                    drawMaze(i); 
-                    drawMaze(i);    
-                }
     
                 for(var i = 0; i < count; i++) {
                     drawMaze(i); 
@@ -377,9 +385,12 @@ function createMaze1NonAni(ctx) {
             l = neighbours[i + 1]; 
             mazes[0][l.x][l.y] = 0;
             mazes[1][l.x][l.y] = 0;
+
+            if (neighbours.length > 2){
+                stacks[0].push( start[0] )
+            }
     
             start[0] = l
-            stacks[0].push( start[0] )
         }    
     }
 }
@@ -496,6 +507,10 @@ function onCreate() {
 
         if(document.getElementById("chkAnimated").checked) {
 
+            for(var i = 0; i < count; i++) {
+                drawGrey(i);
+                drawBlock(i, start[0].x, start[0].y, 0);
+            }
             createMaze1();
         }
         else {
