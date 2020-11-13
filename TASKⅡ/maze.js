@@ -1,5 +1,5 @@
 var ctxs, wid, hei, cols, rows, mazes, stacks = [], start = [{x:-1, y:-1}, {x:-1, y:-1}],
-    end = [{x:-1, y:-1}, {x:-1, y:-1}],grid = 8, padding = 16, s, density=0.5, count=2;
+    end = [{x:-1, y:-1}, {x:-1, y:-1}],grid = 8, padding = 16, s, density=0.5, count=2, endflag;
 function drawMaze(index) {
     for( var i = 0; i < cols; i++ ) {
         for( var j = 0; j < rows; j++ ) {
@@ -12,6 +12,8 @@ function drawMaze(index) {
                 case 8: ctxs[index].fillStyle = "blue"; break;
                 case 9: ctxs[index].fillStyle = "gold"; break;
             }
+            ctxs[index].fillRect( grid * i, grid * j, grid, grid  );
+            ctxs[index].fillRect( grid * i, grid * j, grid, grid  );
             ctxs[index].fillRect( grid * i, grid * j, grid, grid  );
         }
     }
@@ -32,6 +34,8 @@ function drawBlock(index, sx, sy, a) {
         case 8: ctxs[index].fillStyle = "blue"; break;
         case 9: ctxs[index].fillStyle = "gold"; break;
     }
+    ctxs[index].fillRect( grid * sx, grid * sy, grid, grid  );
+    ctxs[index].fillRect( grid * sx, grid * sy, grid, grid  );
     ctxs[index].fillRect( grid * sx, grid * sy, grid, grid  );
 }
 
@@ -191,11 +195,16 @@ function solveMaze1(index) {
         for( var i = 0; i < cols; i++ ) {
             for( var j = 0; j < rows; j++ ) {
                 switch( mazes[index][i][j] ) {
-                    case 2: mazes[index][i][j] = 3; break;
+                    case 2: mazes[index][i][j] = 3;
+                    break;
                 }
             }
         }
         drawMaze(index);
+        ++endflag;
+        if (endflag == 2){
+            document.getElementById( "canvas1" ).addEventListener( "mousedown", getCursorPos, false );
+        }
         return;
     }
     var neighbours = getFNeighbours( 0, start[index].x, start[index].y, 0 );
@@ -203,12 +212,13 @@ function solveMaze1(index) {
         stacks[index].push( start[index] );
         start[index] = neighbours[0];
         mazes[index][start[index].x][start[index].y] = 2;
+        drawBlock(index, start[index].x, start[index].y, 2);
     } else {
         mazes[index][start[index].x][start[index].y] = 4;
+        drawBlock(index, start[index].x, start[index].y, 4);
         start[index] = stacks[index].pop();
     }
- 
-    drawMaze(index);
+
     requestAnimationFrame( function() {
         solveMaze1(index);
     } );
@@ -225,6 +235,10 @@ function solveMaze1New(index) {
             }
         }
         drawMaze(index);
+        ++endflag;
+        if (endflag == 2){
+            document.getElementById( "canvas1" ).addEventListener( "mousedown", getCursorPos, false );
+        }
         return;
     }
     var neighbours = getFNeighboursNew( 1, start[index].x, start[index].y, 0 );
@@ -232,12 +246,13 @@ function solveMaze1New(index) {
         stacks[index].push( start[index] );
         start[index] = neighbours[0];
         mazes[index][start[index].x][start[index].y] = 2;
+        drawBlock(index, start[index].x, start[index].y, 2);
     } else {
         mazes[index][start[index].x][start[index].y] = 4;
+        drawBlock(index, start[index].x, start[index].y, 4);
         start[index] = stacks[index].pop();
     }
- 
-    drawMaze(index);
+
     requestAnimationFrame( function() {
         solveMaze1New(index);
     } );
@@ -267,6 +282,11 @@ function getCursorPos( event ) {
         end[1] = { x: x, y: y };
         mazes[0][end[0].x][end[0].y] = 8;
         mazes[1][end[1].x][end[1].y] = 8;
+        for(var i = 0; i < count; i++) {
+            drawMaze(i); 
+        }
+        document.getElementById("canvas1").removeEventListener("mousedown", getCursorPos, false );
+        endflag = 0;
         solveMaze1(0);
         solveMaze1New(1);
     }
@@ -311,12 +331,7 @@ function createMaze1() {
         neighbours = getNeighbours( 0, start[0].x, start[0].y, 1 );
     }
     if( neighbours.length < 1 && stacks[0].length < 1 ) {
-
-        for(var i = 0; i < count; i++) {
-            drawMaze(i); 
-            drawMaze(i);    
-        }
-
+        
         stacks = new Array(count);
         stacks[0] = []
         stacks[1] = [];
@@ -324,6 +339,7 @@ function createMaze1() {
         start[0].x = start[0].y = -1;
         document.getElementById( "canvas1" ).addEventListener( "mousedown", getCursorPos, false );
         document.getElementById("btnCreateMaze").removeAttribute("disabled");
+        document.getElementById("btnClear").removeAttribute("disabled");
 
         return;
     }
@@ -361,8 +377,7 @@ function createMaze1NonAni(ctx) {
             if( stacks[0].length < 1 ) {
     
                 for(var i = 0; i < count; i++) {
-                    drawMaze(i); 
-                    drawMaze(i);    
+                    drawMaze(i);
                 }
     
                 stacks = new Array(count);
@@ -372,6 +387,7 @@ function createMaze1NonAni(ctx) {
                 start[0].x = start[0].y = -1;
                 document.getElementById( "canvas1" ).addEventListener( "mousedown", getCursorPos, false );
                 document.getElementById("btnCreateMaze").removeAttribute("disabled");
+                document.getElementById("btnClear").removeAttribute("disabled");
     
                 return;
             }
@@ -408,6 +424,7 @@ function createMaze2(ctx) {
     if(start[0].x == (cols - 1) && start[0].y == (rows - 1)){
 
         document.getElementById("btnCreateMaze").removeAttribute("disabled");
+        document.getElementById("btnClear").removeAttribute("disabled");
         return;
     }
 
@@ -434,6 +451,7 @@ function createMaze2NonAni() {
     drawMaze(1);
 
     document.getElementById("btnCreateMaze").removeAttribute("disabled");
+    document.getElementById("btnClear").removeAttribute("disabled");
 }
 
 function createCanvas(count) {
@@ -470,6 +488,7 @@ function onCreate() {
     stacks[1] = [];
 
     document.getElementById("btnCreateMaze").setAttribute("disabled", "disabled");
+    document.getElementById("btnClear").setAttribute("disabled", "disabled");
 
     wid = document.getElementById("maze1").offsetWidth - padding; 
 
