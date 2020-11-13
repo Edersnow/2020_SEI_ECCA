@@ -17,17 +17,17 @@ function drawMaze(index) {
     }
 }
 
-function drawBlock(ctx, sx, sy, a) {
+function drawBlock(index, sx, sy, a) {
     switch( a ) {
-        case 0: ctx.fillStyle = "black"; break;
-        case 1: ctx.fillStyle = "gray"; break;
-        case 2: ctx.fillStyle = "red"; break;
-        case 3: ctx.fillStyle = "yellow"; break;
-        case 4: ctx.fillStyle = "#500000"; break;
-        case 8: ctx.fillStyle = "blue"; break;
+        case 0: ctxs[index].fillStyle = "black"; break;
+        case 1: ctxs[index].fillStyle = "gray"; break;
+        case 2: ctxs[index].fillStyle = "red"; break;
+        case 3: ctxs[index].fillStyle = "yellow"; break;
+        case 4: ctxs[index].fillStyle = "#500000"; break;
+        case 8: ctxs[index].fillStyle = "blue"; break;
         case 9: ctxs[index].fillStyle = "gold"; break;
     }
-    ctx.fillRect( grid * sx, grid * sy, grid, grid  );
+    ctxs[index].fillRect( grid * sx, grid * sy, grid, grid  );
 }
 
 function getFNeighbours( index, sx, sy, a ) {
@@ -300,12 +300,12 @@ function createArray( c, r ) {
 
 function createMaze1() {
     var neighbours = getNeighbours( 0, start[0].x, start[0].y, 1 ), l;
+    for(var i = 0; i < count; i++) {
+        drawMaze(i); 
+    }
+
     if( neighbours.length < 1 ) {
         if( stacks[0].length < 1 ) {
-
-            for(var i = 0; i < count; i++) {
-                drawMaze(i); 
-            }
 
             stacks = new Array(count);
             stacks[0] = []
@@ -323,17 +323,18 @@ function createMaze1() {
         l = neighbours[i]; 
         mazes[0][l.x][l.y] = 0;
         mazes[1][l.x][l.y] = 0;
+        drawBlock(0, l.x, l.y, 0);
+        drawBlock(1, l.x, l.y, 0);
 
         l = neighbours[i + 1]; 
         mazes[0][l.x][l.y] = 0;
         mazes[1][l.x][l.y] = 0;
+        drawBlock(0, l.x, l.y, 0);
+        drawBlock(1, l.x, l.y, 0);
 
         start[0] = l
 
         stacks[0].push( start[0] )
-    }
-    for(var i = 0; i < count; i++) {
-        drawMaze(i); 
     }
     
     requestAnimationFrame( createMaze1 );
@@ -381,8 +382,6 @@ function createMaze1NonAni(ctx) {
             stacks[0].push( start[0] )
         }    
     }
-    //useless
-    //document.getElementById("btnCreateMaze").removeAttribute("disabled");
 }
 
 function createMaze2(ctx) {
@@ -462,7 +461,6 @@ function onCreate() {
     document.getElementById("btnCreateMaze").setAttribute("disabled", "disabled");
 
     wid = document.getElementById("maze1").offsetWidth - padding; 
-    hei = 400;
 
     cols = eval(document.getElementById("cols").value);
     rows = eval(document.getElementById("rows").value);
