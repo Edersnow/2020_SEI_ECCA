@@ -195,15 +195,18 @@ function solveMaze1(index) {
         for( var i = 0; i < cols; i++ ) {
             for( var j = 0; j < rows; j++ ) {
                 switch( mazes[index][i][j] ) {
-                    case 2: mazes[index][i][j] = 3;
-                    break;
+                    case 2:
+                        mazes[index][i][j] = 3;
+                        drawBlock(index, i, j, 3);
+                        break;
                 }
             }
         }
-        drawMaze(index);
         ++endflag;
         if (endflag == 2){
             document.getElementById( "canvas1" ).addEventListener( "mousedown", getCursorPos, false );
+            document.getElementById("btnCreateMaze").removeAttribute("disabled");
+            document.getElementById("btnClear").removeAttribute("disabled");
         }
         return;
     }
@@ -230,14 +233,18 @@ function solveMaze1New(index) {
         for( var i = 0; i < cols; i++ ) {
             for( var j = 0; j < rows; j++ ) {
                 switch( mazes[index][i][j] ) {
-                    case 2: mazes[index][i][j] = 3; break;
+                    case 2:
+                        mazes[index][i][j] = 3;
+                        drawBlock(index, i, j, 3);
+                        break;
                 }
             }
         }
-        drawMaze(index);
         ++endflag;
         if (endflag == 2){
             document.getElementById( "canvas1" ).addEventListener( "mousedown", getCursorPos, false );
+            document.getElementById("btnCreateMaze").removeAttribute("disabled");
+            document.getElementById("btnClear").removeAttribute("disabled");
         }
         return;
     }
@@ -273,19 +280,20 @@ function getCursorPos( event ) {
         start[1] = { x: x, y: y };
         mazes[0][start[0].x][start[0].y] = 9;
         mazes[1][start[1].x][start[1].y] = 9;
-        
-        for(var i = 0; i < count; i++) {
-            drawMaze(i); 
-        }
+        drawBlock(0, start[0].x, start[0].y, 9);
+        drawBlock(1, start[1].x, start[1].y, 9);
+
     } else {
         end[0] = { x: x, y: y };
         end[1] = { x: x, y: y };
         mazes[0][end[0].x][end[0].y] = 8;
         mazes[1][end[1].x][end[1].y] = 8;
-        for(var i = 0; i < count; i++) {
-            drawMaze(i); 
-        }
+        drawBlock(0, end[0].x, end[0].y, 8);
+        drawBlock(1, end[1].x, end[1].y, 8);
+
         document.getElementById("canvas1").removeEventListener("mousedown", getCursorPos, false );
+        document.getElementById("btnCreateMaze").setAttribute("disabled", "disabled");
+        document.getElementById("btnClear").setAttribute("disabled", "disabled");
         endflag = 0;
         solveMaze1(0);
         solveMaze1New(1);
